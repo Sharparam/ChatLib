@@ -47,11 +47,8 @@ namespace Sharparam.ChatLib.Bots
 
         public virtual void ProcessAsync(ChatData data)
         {
-            if (IsProcessing)
-                throw new Exception("Bot is already processing data.");
-
-            if (ProcessThread != null && ProcessThread.IsAlive)
-                throw new Exception("Bot is already processing data in the background.");
+            if (IsProcessing || (ProcessThread != null && ProcessThread.IsAlive))
+                throw new BotAlreadyProcessingException();
 
             ProcessThread = new Thread(o => Process((ChatData) o)) {IsBackground = true};
             ProcessThread.Start(data);

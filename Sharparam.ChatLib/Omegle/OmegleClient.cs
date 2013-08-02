@@ -48,7 +48,7 @@ namespace Sharparam.ChatLib.Omegle
         /// <summary>
         /// Stranger has stopped typing their message.
         /// </summary>
-        public event EventHandler StrangerStoppedTyping;
+        public event StoppedTypingEventHandler StrangerStoppedTyping;
 
         /// <summary>
         /// Raised when SendRawMessage has sent a message.
@@ -102,6 +102,7 @@ namespace Sharparam.ChatLib.Omegle
         private Thread _listenThread;
 
         private readonly Stopwatch _listenLatencyTimer;
+        private readonly Stopwatch _strangerMessageTimer;
 
         /// <summary>
         /// Gets whether or not the client is connected to Omegle servers.
@@ -124,6 +125,7 @@ namespace Sharparam.ChatLib.Omegle
         public OmegleClient()
         {
             _listenLatencyTimer = new Stopwatch();
+            _strangerMessageTimer = new Stopwatch();
         }
 
         private void OnConnected()
@@ -168,11 +170,11 @@ namespace Sharparam.ChatLib.Omegle
                 func(this, null);
         }
 
-        private void OnStrangerStoppedTyping()
+        private void OnStrangerStoppedTyping(int elapsed)
         {
             var func = StrangerStoppedTyping;
             if (func != null)
-                func(this, null);
+                func(this, new StoppedTypingEventArgs(elapsed));
         }
 
         private void OnRawMessageSent(ChatData data)
@@ -426,17 +428,21 @@ namespace Sharparam.ChatLib.Omegle
                         Disconnect();
                         break;
                     case "gotMessage":
-                        OnMessageReceived(new ChatData(e[1].ToString().TrimStart('"').TrimEnd('"'), (int) elapsed));
+                        _strangerMessageTimer.Stop();
+                        OnMessageReceived(new ChatData(e[1].ToString().TrimStart('"').TrimEnd('"'), (int) _strangerMessageTimer.ElapsedMilliseconds));
                         break;
                     case "waiting":
                         IsStrangerConnected = false;
                         OnWaiting();
                         break;
                     case "typing":
+                        _strangerMessageTimer.Reset();
+                        _strangerMessageTimer.Start();
                         OnStrangerTyping();
                         break;
                     case "stoppedTyping":
-                        OnStrangerStoppedTyping();
+                        _strangerMessageTimer.Stop();
+                        OnStrangerStoppedTyping((int) _strangerMessageTimer.ElapsedMilliseconds);
                         break;
                     case "count":
                         int count;

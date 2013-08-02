@@ -33,9 +33,10 @@ namespace Sharparam.ChatLib.Bots
         public override ChatData Process(ChatData data)
         {
             if (IsProcessing)
-                throw new Exception("Bot is already processing data.");
+                throw new BotAlreadyProcessingException();
 
             IsProcessing = true;
+
             OnProcessingStarted(data);
 
             var timer = new Stopwatch();
@@ -87,8 +88,9 @@ namespace Sharparam.ChatLib.Bots
 
             var result = new ChatData(responseVals.AtIndex(16), (int) timer.ElapsedMilliseconds);
 
-            IsProcessing = false;
             OnProcessingFinished(result);
+
+            IsProcessing = false;
 
             return result;
         }
