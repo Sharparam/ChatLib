@@ -21,12 +21,29 @@ namespace Sharparam.ChatLib.Bots
             _requestParams = new Dictionary<string, string>
             {
                 {"start", "y"},
+                {"sessionid", ""},
+                {"vText8", ""},
+                {"vText7", ""},
+                {"vText6", ""},
+                {"vText5", ""},
+                {"vText4", ""},
+                {"vText3", ""},
+                {"vText2", ""},
                 {"icognoid", "wsf"},
                 {"fno", "0"},
+                {"prevref", ""},
+                {"emotionaloutput", ""},
+                {"emotionalhistory", ""},
+                {"asbotname", ""},
+                {"ttsvoice", ""},
+                {"typing", ""},
+                {"tweak1", "-1"},
+                {"tweak2", "-1"},
+                {"tweak3", "-1"},
+                {"lineref", ""},
                 {"sub", "Say"},
                 {"islearning", "1"},
-                {"cleanslate", "false"},
-                {"asbotname", ""}
+                {"cleanslate", "false"}
             };
         }
 
@@ -45,7 +62,7 @@ namespace Sharparam.ChatLib.Bots
             _requestParams["stimulus"] = data.Text;
 
             var encoded = _requestParams.ToUrlParams();
-            var encodedDigest = encoded.Substring(9, 20).ToMD5();
+            var encodedDigest = encoded.Substring(9, 26).ToMD5();
 
             _requestParams["icognocheck"] = encodedDigest;
 

@@ -78,7 +78,11 @@ namespace BotTest
                 omegle.Connect();
 
                 while (omegle.IsConnected)
-                    System.Threading.Thread.Sleep(1000);
+                {
+                    input = Console.ReadLine();
+                    if (!string.IsNullOrEmpty(input))
+                        omegle.SendMessage(input, 100 + 100 * input.Length);
+                }
 
                 Console.WriteLine("Omegle connection closed!");
                 Console.Title = "Idle...";

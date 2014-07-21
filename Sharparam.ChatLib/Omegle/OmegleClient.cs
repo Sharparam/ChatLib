@@ -384,7 +384,7 @@ namespace Sharparam.ChatLib.Omegle
             var timer = new Stopwatch();
             timer.Start();
 
-            SendRawMessage(HttpUtility.UrlEncode(message));
+            SendRawMessage(message);
 
             timer.Stop();
 
